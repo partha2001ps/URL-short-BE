@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { default: mongoose } = require("mongoose");
 const { JWT_PASS, EMAIL_PASS } = require("../utiles/config");
 const nodemailer=require('nodemailer');
+const { auth_middleWare } = require("../middelware/auth");
 
 
 const UserContorller = {
@@ -39,7 +40,8 @@ const UserContorller = {
                 return res.status(400).json({message:"Invaild Password"})
             }
             const token = jwt.sign({
-                email:email
+                email: email,
+                id:user._id
             },JWT_PASS)
             res.json({ token, email: email })
         }
@@ -102,6 +104,11 @@ const UserContorller = {
         catch (e) {
             console.log(e)
         }
-       }
+    },
+    profile: async (request, responce) => {
+        const userId = request.userId
+        const user = await User.findById(userId)
+        responce.json(user)
+    }
 }
 module.exports = UserContorller;
