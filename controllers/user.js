@@ -105,10 +105,5 @@ const UserContorller = {
             console.log(e)
         }
     },
-    profile: async (request, responce) => {
-        const userId = request.userId
-        const user = await User.findById(userId)
-        responce.json(user)
-    }
 }
 module.exports = UserContorller;

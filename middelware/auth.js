@@ -19,7 +19,7 @@ const auth = {
                 if (error) {
                    return res.status(400).json({message:"Invaild Token"})
                 }
-                console.log(decodeToken)
+                // console.log(decodeToken)
                 req.userId = decodeToken.id;
                 next();
            }) 
