@@ -15,6 +15,8 @@ const urlcontroller = {
             longUrl,
             user:userId
           })
+          user.totalurls += 1;
+          await user.save()
           // console.log(longUrl)
           await data.save()
           return res.status(200).json({id:shortId})
@@ -32,6 +34,8 @@ const urlcontroller = {
         const data = await URL_Model.findOne({ shortUrl: shortId });
         
         if (data) {
+          data.totalClicks += 1;
+          await data.save();
           return res.redirect(data.longUrl);
         } else {
           return res.status(404).json({ message: "Short URL not found" });
@@ -41,7 +45,31 @@ const urlcontroller = {
         return res.status(500).json({ message: "Internal Server Error" });
       }
     },
+  delete_url:async (req,res)=>{
+      try {
+        const userId = req.userId;
+        const { shortId } = req.params;
     
+        const url = await URL_Model.findOne({ shortUrl: shortId});
+    
+        if (url) {
+          if (url.user.toString() === userId) {
+            await URL_Model.findOneAndDelete({ shortUrl: shortId });
+            await User.findByIdAndUpdate(userId, { $inc: { totalurls: -1 } });
+            return res.json({ message: "Delete Done" });
+          } else {
+            return res.status(403).json({ message: "Unauthorized: You cannot delete this URL" });
+          }
+        } else {
+          return res.status(404).json({ message: "Invalid ShortId" });
+        }
+      } catch (e) {
+        console.error(e);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
+    
+    
+   }
     
   };
   

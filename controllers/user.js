@@ -10,14 +10,15 @@ const { auth_middleWare } = require("../middelware/auth");
 const UserContorller = {
     singup: async(req, res) => {
         try {
-            const { name, email, password } = req.body
+            const { firstname,lastname, email, password } = req.body
             const exitinguser =await User.findOne({ email })
             if (exitinguser) {
                 return res.status(400).json({message:"This is Email Already Exiting... To use Another email or LogIn"})
             }
           const passwordHash = await bcrypt.hash(password, 10)
             const user = new User({
-                name:name,
+                firstname,
+                lastname,
                 email: email,
                 passwordHash
             })
