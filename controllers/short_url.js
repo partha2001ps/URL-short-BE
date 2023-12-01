@@ -38,7 +38,7 @@ const urlcontroller = {
           await data.save();
           return res.redirect(data.longUrl);
         } else {
-          return res.status(404).json({ message: "Short URL not found" });
+          return res.json({ message: "Short URL not found" });
         }
       } catch (e) {
         console.error("error", e);

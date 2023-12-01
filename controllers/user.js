@@ -54,7 +54,7 @@ const UserContorller = {
         const { email } = req.body;
         const user = await User.findOne({ email })
         if (!user) {
-            return res.ststus(400).json({meaasge:"Invaild User"})
+            return res.json({meaasge:"Invaild User"})
         }
         const OTP = Math.random().toString(36).slice(-6);
         user.reset_OTP = OTP
@@ -88,11 +88,11 @@ const UserContorller = {
             const { OTP } = req.params;
         const { password } = req.body;
         if (!password) {
-            return res.status(400).json({ message: "please enter the new password" });
+            return res.json({ message: "please enter the new password" });
         }
         const user = await User.findOne({ reset_OTP: OTP })
         if (!user) {
-            return res.status(400).json({ message: "Invalid OTP" });
+            return res.json({ message: "Invalid OTP" });
         }
         const NewPass = await bcrypt.hash(password, 10);
         user.passwordHash = NewPass;
