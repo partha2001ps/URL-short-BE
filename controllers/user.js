@@ -13,7 +13,7 @@ const UserContorller = {
             const { firstname,lastname, email, password } = req.body
             const exitinguser =await User.findOne({ email })
             if (exitinguser) {
-                return res.status(400).json({message:"This is Email Already Exiting... To use Another email or LogIn"})
+                return res.json({message:"This is Email Already Exiting... To use Another email or LogIn"})
             }
           const passwordHash = await bcrypt.hash(password, 10)
             const user = new User({
@@ -34,11 +34,11 @@ const UserContorller = {
             const { email, password } = req.body;
             const user = await User.findOne({ email })
             if (!user) {
-                return res.ststus(400).json({meaasge:"Invaild User"})
+                return res.json({meaasge:"Invaild User"})
             }
             const passwordMatch = await bcrypt.compare(password, user.passwordHash);
             if (!passwordMatch) {
-                return res.status(400).json({message:"Invaild Password"})
+                return res.json({message:"Invaild Password"})
             }
             const token = jwt.sign({
                 email: email,
