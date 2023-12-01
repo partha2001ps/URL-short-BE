@@ -34,11 +34,11 @@ const UserContorller = {
             const { email, password } = req.body;
             const user = await User.findOne({ email })
             if (!user) {
-                return res.json({meaasge:"Invaild User"})
+                return res.status(400).json({meaasge:"Invaild User"})
             }
             const passwordMatch = await bcrypt.compare(password, user.passwordHash);
             if (!passwordMatch) {
-                return res.json({message:"Invaild Password"})
+                return res.status(403).json({message:"Invaild Password"})
             }
             const token = jwt.sign({
                 email: email,
