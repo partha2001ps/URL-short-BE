@@ -11,7 +11,7 @@ const urlcontroller = {
       if (user) {
         const shortId = shortid()
         const data = new URL_Model({
-          shortUrl: `https://url-short-8pbk.onrender.com/api${shortId}`,
+          shortUrl: shortId,
           longUrl,
           user: userId
         })
