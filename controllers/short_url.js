@@ -32,7 +32,7 @@ const urlcontroller = {
     try {
       const userId = req.userId;
       const { shortId } = req.params;
-      const data = await URL_Model.find({ shortUrl: shortId ,user: userId});
+      const data = await URL_Model.findOne({ shortUrl: shortId, user: userId });
         
       if (data) {
         data.totalClicks += 1;
