@@ -8,7 +8,7 @@ const urlcontroller = {
       const { longUrl } = req.body;
       const userId = req.userId;
       const user = await User.findById(userId);
-      if (user) {
+      if (user && user.activated) {
         const shortId = shortid()
         const data = new URL_Model({
           shortUrl: shortId,
@@ -21,7 +21,7 @@ const urlcontroller = {
         await data.save()
         return res.status(200).json({ id: shortId })
       }
-      return res.json({ message: "User not found" });
+      return res.json({ message: "User not found or User Not Active Account" });
     } catch (e) {
       console.log("error", e);
       return res.status(500).json({ message: "Internal Server Error" });
@@ -82,7 +82,18 @@ const urlcontroller = {
       console.error("Error fetching URLs:", error);
       return res.status(500).json({ error: "Internal Server Error" });
     }
+  },
+  Allurls: async (req, res) => {
+    try {
+      const data = await URL_Model.find();
+    if (data) {
+      return res.status(200).json(data)
+    }
+    return res.json({message:"No Url's"})
+    } catch (e) {
+      return res.json(e)
   }
+   }
 }
   module.exports = urlcontroller;
   

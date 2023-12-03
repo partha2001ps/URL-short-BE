@@ -8,25 +8,56 @@ const { auth_middleWare } = require("../middelware/auth");
 
 
 const UserContorller = {
-    singup: async(req, res) => {
+    singup: async (req, res) => {
         try {
-            const { firstname,lastname, email, password } = req.body
-            const exitinguser =await User.findOne({ email })
-            if (exitinguser) {
-                return res.json({message:"This is Email Already Exiting... To use Another email or LogIn"})
+            const { firstname, lastname, email, password } = req.body;
+            const existingUser = await User.findOne({ email });
+
+            if (existingUser) {
+                return res.json({ message: "This email is already in use. Please use another email or log in." });
             }
-          const passwordHash = await bcrypt.hash(password, 10)
+
+            const passwordHash = await bcrypt.hash(password, 10);
+            const activationToken = Math.random().toString(36).slice(-10);
+
             const user = new User({
                 firstname,
                 lastname,
-                email: email,
-                passwordHash
-            })
-            await user.save()
-            return res.status(200).json({message:"user created successfull"})
-        }
-        catch (e) {
-            console.log(e)
+                email,
+                passwordHash,
+                activationToken,
+                activated: false, 
+            });
+
+            await user.save();
+
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'parthapn2017@gmail.com',
+                    pass: EMAIL_PASS,
+                },
+            });
+
+            const activationLink = ` http://localhost:5173/activate-account/${activationToken}`;
+            const mailOptions = {
+                from: 'noreply@example.com',
+                to: email,
+                subject: 'Activate Your Account',
+                text: `Welcome to the site! Please click the following link to activate your account: ${activationLink}`,
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log(error);
+                    return res.json({ message: 'Error sending activation email' });
+                } else {
+                    return res.json({ message: 'Activation email sent successfully' });
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({ message: "Internal Server Error" });
         }
     },
     singIn: async (req, res)=>{
@@ -66,7 +97,7 @@ const UserContorller = {
               pass: EMAIL_PASS,
             },
           });
-          const Link=`http://localhost:5173/reset-password/new-password/${OTP}`
+          const Link=`https://main--lively-crumble-bcfe7b.netlify.app/reset-password/new-password/${OTP}`
           const mailOptions = {
             from: 'Password_resest_noreply@gmail.com',
             to: email,
@@ -106,5 +137,24 @@ const UserContorller = {
             console.log(e)
         }
     },
-}
+    activateAccount: async (req, res) => {
+        try {
+            const { activationToken } = req.params;
+            const user = await User.findOne({ activationToken, activated: false });
+
+            if (user) {
+                user.activated = true;
+                user.activationToken = null; // Optional: Clear activation token after activation
+                await user.save();
+
+                return res.json({ message: 'Account activated successfully' });
+            } else {
+                return res.json({ message: 'Invalid activation token or account already activated' });
+            }
+        } catch (error) {
+            console.error("Error activating account:", error);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+};
 module.exports = UserContorller;
