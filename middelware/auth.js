@@ -3,7 +3,7 @@ const { JWT_PASS } = require('../utiles/config');
 
 const auth = {
     auth_middleWare: async (req, res, next) => {
-        res.setHeader('Access-Control-Allow-Origin', 'https://url-short-8pbk.onrender.com/api');
+        res.setHeader('Access-Control-Allow-Origin', 'https://main--lively-crumble-bcfe7b.netlify.app/');
         const token = req.headers.authorization;
         if (!token) {
             return res.status(400).json({message:"Token not vaild"})
