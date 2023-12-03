@@ -66,12 +66,12 @@ const UserContorller = {
               pass: EMAIL_PASS,
             },
           });
-        
+          const Link=`http://localhost:5173/reset-password/new-password/${OTP}`
           const mailOptions = {
             from: 'Password_resest_noreply@gmail.com',
             to: email,
             subject: 'Reset Your Password',
-            text: `you are receiving this email because you request has passwords reset for your account .\n\n please use the following  OTP to reset your password:${OTP} \n\n if you did not request a password to ignore this email. `,
+            text: `you are receiving this email because you request has passwords reset for your account .\n\n please use the following Link  to  Click reset your password:${Link} \n\n if you did not request a password to ignore this email. `,
           };
         
           transporter.sendMail(mailOptions, (error, info) => {
