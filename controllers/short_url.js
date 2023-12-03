@@ -30,8 +30,9 @@ const urlcontroller = {
   
   redirect_short: async (req, res) => {
     try {
+      const userId = req.userId;
       const { shortId } = req.params;
-      const data = await URL_Model.findOne({ shortUrl: shortId });
+      const data = await URL_Model.find({ shortUrl: shortId ,user: userId});
         
       if (data) {
         data.totalClicks += 1;
