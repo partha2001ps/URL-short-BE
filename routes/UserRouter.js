@@ -11,7 +11,7 @@ UserRouter.post('/reset-password/:OTP', UserContorller.newpassword);
 
 UserRouter.get('/', auth.auth_middleWare, urlcontroller.geturl)
 UserRouter.post('/', auth.auth_middleWare, urlcontroller.url_long)
-UserRouter.get('/:shortId', auth.auth_middleWare,urlcontroller.redirect_short);
+UserRouter.get('/:shortId',urlcontroller.redirect_short);
 UserRouter.delete('/:shortId', auth.auth_middleWare, urlcontroller.delete_url);
 
 module.exports = UserRouter;
