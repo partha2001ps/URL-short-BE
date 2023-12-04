@@ -114,6 +114,10 @@ const UserContorller = {
     activetlikesent: async (req, res) => {
         const { email } = req.params;
         const user = await User.findOne({ email })
+        console.log(user.activated)
+        if (user.activated) {
+            return res.json({message:'user Already Activated'})
+        }
         if (!user) {
             return res.json({meaasge:"Invaild User"})
         }
