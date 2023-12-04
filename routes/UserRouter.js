@@ -4,6 +4,8 @@ const UserContorller = require('../controllers/user');
 const auth = require('../middelware/auth');
 const urlcontroller = require('../controllers/short_url');
 
+UserRouter.post('/Acctivatelink/:email',UserContorller.activetlikesent)
+
 UserRouter.post('/singup', UserContorller.singup);
 UserRouter.post('/singin', UserContorller.singIn);
 UserRouter.post('/reset-password', UserContorller.resetPassword);

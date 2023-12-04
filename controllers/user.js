@@ -18,43 +18,17 @@ const UserContorller = {
             }
 
             const passwordHash = await bcrypt.hash(password, 10);
-            const activationToken = Math.random().toString(36).slice(-10);
-
+          
             const user = new User({
                 firstname,
                 lastname,
                 email,
                 passwordHash,
-                activationToken,
                 activated: false, 
             });
 
             await user.save();
-
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: 'parthapn2017@gmail.com',
-                    pass: EMAIL_PASS,
-                },
-            });
-
-            const activationLink = ` http://localhost:5173/activate-account/${activationToken}`;
-            const mailOptions = {
-                from: 'noreply@example.com',
-                to: email,
-                subject: 'Activate Your Account',
-                text: `Welcome to the site! Please click the following link to activate your account: ${activationLink}`,
-            };
-
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.log(error);
-                    return res.json({ message: 'Error sending activation email' });
-                } else {
-                    return res.json({ message: 'Activation email sent successfully' });
-                }
-            });
+            return res.status(200).json({message:"User Created Successfull"})
         } catch (e) {
             console.log(e);
             return res.status(500).json({ message: "Internal Server Error" });
@@ -136,6 +110,41 @@ const UserContorller = {
         catch (e) {
             console.log(e)
         }
+    },
+    activetlikesent: async (req, res) => {
+        const { email } = req.params;
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.json({meaasge:"Invaild User"})
+        }
+        const activationToken = Math.random().toString(36).slice(-10);
+        user.activationToken = activationToken;
+       await user.save()
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'parthapn2017@gmail.com',
+                pass: EMAIL_PASS,
+            },
+        });
+
+        const activationLink = ` https://main--lively-crumble-bcfe7b.netlify.app/activate-account/${activationToken}`;
+        const mailOptions = {
+            from: 'noreply@example.com',
+            to: email,
+            subject: 'Activate Your Account',
+            text: `Welcome to the site! Please click the following link to activate your account: ${activationLink}`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return res.json({ message: 'Error sending activation email' });
+            } else {
+                return res.json({ message: 'Activation email sent successfully' });
+            }
+        });
+
     },
     activateAccount: async (req, res) => {
         try {
